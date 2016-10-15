@@ -1,0 +1,25 @@
+class base::ssh {
+	package { 'openssh-package':
+		name => 'openssh',
+		ensure => present,
+		before => File['/etc/ssh/sshd_config'],
+	}
+
+	# Disable root login
+	file { '/etc/ssh/sshd_config':
+		ensure => file,
+		owner => 'root',
+		group => 'root',
+		# require that the Package resource has run.
+		source => 'puppet:///modules/base/sshd_config',
+		notify => Service['sshd-service'],
+	}
+
+	service { 'sshd-service':
+		name => 'sshd',
+		ensure => running,
+		enable => true,
+	}
+		
+
+}
